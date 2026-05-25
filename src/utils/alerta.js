@@ -1,17 +1,20 @@
 import Swal from 'sweetalert2';
 
-const Toast = Swal.mixin({
-  toast: true,
-  position: 'center',
-  showConfirmButton: false,
-  timer: 3000,
+const Modal = Swal.mixin({
+  confirmButtonColor: '#3a86ff',
+  timer: 2500,
   timerProgressBar: true,
 });
 
 const alerta = {
-  exito: (texto) => Toast.fire({ icon: 'success', title: texto }),
-  error: (texto) => Toast.fire({ icon: 'error',   title: texto }),
-  aviso: (texto) => Toast.fire({ icon: 'warning', title: texto }),
+  exito: (texto) =>
+    Modal.fire({ icon: 'success', title: texto }),
+
+  error: (texto) =>
+    Modal.fire({ icon: 'error', title: 'Ocurrió un error', text: texto }),
+
+  aviso: (texto) =>
+    Modal.fire({ icon: 'warning', title: 'Atención', text: texto }),
 
   confirmarEliminar: () =>
     Swal.fire({
