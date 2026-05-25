@@ -1,17 +1,8 @@
 import { useState, useEffect } from 'react';
-import Swal from 'sweetalert2';
 import UserList from './components/UserList';
 import UserForm from './components/UserForm';
+import alerta from './utils/alerta';
 import { getUsuarios, createUsuario, updateUsuario, deleteUsuario } from './services/api';
-
-// Configuración base de SweetAlert2 para toasts
-const Toast = Swal.mixin({
-  toast: true,
-  position: 'bottom-end',
-  showConfirmButton: false,
-  timer: 3000,
-  timerProgressBar: true,
-});
 
 function App() {
   const [usuarios, setUsuarios] = useState([]);
@@ -25,7 +16,7 @@ function App() {
       const data = await getUsuarios();
       setUsuarios(data);
     } catch (err) {
-      Toast.fire({ icon: 'error', title: 'No se pudo conectar con el servidor.' });
+      alerta.error('No se pudo conectar con el servidor.');
     } finally {
       setLoading(false);
     }
@@ -46,35 +37,26 @@ function App() {
   };
 
   const handleEliminar = async (id) => {
-    const resultado = await Swal.fire({
-      title: '¿Eliminar usuario?',
-      text: 'Esta acción no se puede deshacer.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#e63946',
-      cancelButtonColor: '#6c757d',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar',
-    });
+    const resultado = await alerta.confirmarEliminar();
 
     if (!resultado.isConfirmed) return;
 
     try {
       await deleteUsuario(id);
       await cargarUsuarios();
-      Toast.fire({ icon: 'success', title: 'Usuario eliminado correctamente.' });
+      alerta.exito('Usuario eliminado correctamente.');
     } catch (err) {
-      Toast.fire({ icon: 'error', title: err.message });
+      alerta.error(err.message);
     }
   };
 
   const handleSubmit = async (data) => {
     if (editingUser) {
       await updateUsuario(editingUser.id, data);
-      Toast.fire({ icon: 'success', title: 'Usuario actualizado correctamente.' });
+      alerta.exito('Usuario actualizado correctamente.');
     } else {
       await createUsuario(data);
-      Toast.fire({ icon: 'success', title: 'Usuario creado correctamente.' });
+      alerta.exito('Usuario creado correctamente.');
     }
     setShowForm(false);
     setEditingUser(null);

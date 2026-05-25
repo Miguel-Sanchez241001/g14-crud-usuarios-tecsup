@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Swal from 'sweetalert2';
+import alerta from '../utils/alerta';
 
 const FORM_VACIO = {
   nombre: '',
@@ -68,16 +68,7 @@ function UserForm({ editingUser, onSubmit, onCancelar }) {
       if (mensajeError.includes('contraseña')) camposMarcados.contrasena = true;
       if (mensajeError.includes('teléfono'))   camposMarcados.telefono = true;
       setCamposError(camposMarcados);
-
-      Swal.fire({
-        toast: true,
-        position: 'bottom-end',
-        icon: 'warning',
-        title: mensajeError,
-        showConfirmButton: false,
-        timer: 4000,
-        timerProgressBar: true,
-      });
+      alerta.aviso(mensajeError);
       return;
     }
 
@@ -86,15 +77,7 @@ function UserForm({ editingUser, onSubmit, onCancelar }) {
     try {
       await onSubmit(form);
     } catch (err) {
-      Swal.fire({
-        toast: true,
-        position: 'bottom-end',
-        icon: 'error',
-        title: err.message,
-        showConfirmButton: false,
-        timer: 4000,
-        timerProgressBar: true,
-      });
+      alerta.error(err.message);
     } finally {
       setGuardando(false);
     }
